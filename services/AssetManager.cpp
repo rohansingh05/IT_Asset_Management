@@ -1,16 +1,130 @@
 #include "../utils/InputHelper.h"
-#include <map>
 #include "FileManager.h"
+#include "../models/LifecycleRecord.h"
+#include "../models/MaintenanceRecord.h"
+#include <cmath>
+#include <map>
 #include "AssetManager.h"
 #include <iomanip>
 #include <ctime>
 #include <sstream>
 
 // Register new asset
+const vector<Asset>& AssetManager::getAssets() const {
+    return assets;
+}
+
+
+// Registration method for the web frontend
+bool AssetManager::registerAsset(
+    const string& assetType,
+    const string& brand,
+    const string& model,
+    const string& serialNumber,
+    const string& purchaseDate,
+    double purchaseCost,
+    const string& warrantyEndDate,
+    const string& location,
+    const string& department,
+    const string& assignedEmployee,
+    int& generatedAssetID,
+    string& errorMessage
+) {
+
+    // Validate required fields
+    if (assetType.empty() || brand.empty() ||
+        model.empty() || serialNumber.empty() ||
+        purchaseDate.empty() || warrantyEndDate.empty() ||
+        location.empty() || department.empty()) {
+
+        errorMessage = "Please fill all required fields.";
+        return false;
+    }
+
+    // Validate purchase cost
+    if (!std::isfinite(purchaseCost) || purchaseCost < 0) {
+        errorMessage = "Purchase cost must be a valid non-negative number.";
+        return false;
+    }
+
+    // Validate dates
+    if (!isValidDate(purchaseDate) ||
+        !isValidDate(warrantyEndDate)) {
+
+        errorMessage = "Invalid date. Use DD-MM-YYYY format.";
+        return false;
+    }
+
+    // Compare validated dates in YYYYMMDD order
+    auto dateKey = [](const string& date) {
+        return date.substr(6, 4) +
+               date.substr(3, 2) +
+               date.substr(0, 2);
+    };
+
+    if (dateKey(warrantyEndDate) < dateKey(purchaseDate)) {
+        errorMessage =
+            "Warranty end date cannot be before purchase date.";
+        return false;
+    }
+
+    // Prevent duplicate serial numbers
+    for (const Asset& existingAsset : assets) {
+
+        if (existingAsset.getSerialNumber() == serialNumber) {
+            errorMessage = "This serial number is already registered.";
+            return false;
+        }
+    }
+
+    // Generate Asset ID in C++, never in JavaScript
+    int newID = nextAssetID;
+
+    string employee =
+        assignedEmployee.empty() ? "None" : assignedEmployee;
+
+    string status =
+        (employee == "None") ? "In Stock" : "In Use";
+
+    Asset newAsset(
+        newID,
+        assetType,
+        brand,
+        model,
+        serialNumber,
+        purchaseDate,
+        purchaseCost,
+        warrantyEndDate,
+        location,
+        department,
+        employee,
+        status
+    );
+
+    assets.push_back(newAsset);
+
+    // Save before confirming successful registration
+    if (!FileManager::saveAssets(assets)) {
+
+        assets.pop_back();
+
+        errorMessage =
+            "Could not save asset data. Check the data folder.";
+
+        return false;
+    }
+
+    generatedAssetID = newID;
+    nextAssetID++;
+
+    errorMessage.clear();
+
+    return true;
+}
 void AssetManager::addAsset()
 {
 
-  int id;
+  int assetID = nextAssetID;
   string type, brand, model;
   string serial, pDate, warranty;
   string location, department, employee;
@@ -18,34 +132,16 @@ void AssetManager::addAsset()
 
   cout << "\n===== REGISTER NEW ASSET =====\n";
 
-  id = readInt("Enter Asset ID: ");
-
-  if (id <= 0)
-  {
-
-    cout << "Asset ID must be positive!\n";
-    return;
-  }
-
-  // Check duplicate Asset ID
-  bool duplicate = false;
-
-  for (const Asset& a : assets) {
-
-      if (a.getAssetID() == id) {
-
-          duplicate = true;
-          break;
-      }
-  }
-
-  if (duplicate) {
-
-      cout << "Asset ID already exists!\n";
-      return;
-  }
-
   cin.ignore();
+  
+  cout << "Enter Location: ";
+  getline(cin, location);
+
+  cout << "Enter Department: ";
+  getline(cin, department);
+
+  cout << "Enter Employee Name (or None): ";
+  getline(cin, employee);
 
   cout << "Enter Asset Type: ";
   getline(cin, type);
@@ -67,18 +163,12 @@ void AssetManager::addAsset()
 
   pDate = readDate("Enter Warranty End Date: ");
 
-  cout << "Enter Location: ";
-  getline(cin, location);
 
-  cout << "Enter Department: ";
-  getline(cin, department);
 
-  cout << "Enter Employee Name (or None): ";
-  getline(cin, employee);
 
   // Create Asset object
   Asset newAsset(
-      id, type, brand, model,
+      assetID, type, brand, model,
       serial, pDate, cost,
       warranty, location,
       department, employee,
@@ -86,6 +176,9 @@ void AssetManager::addAsset()
 
   // Store object in vector
   assets.push_back(newAsset);
+
+  nextAssetID++;
+
   if (!FileManager::saveAssets(assets)) {
     cout << "Error: Asset data could not be saved!\n";
   }
@@ -150,6 +243,16 @@ void AssetManager::loadExistingAssets()
   FileManager::loadHistory(history);
 
   FileManager::loadMaintenance(maintenanceRecords);
+
+  int maxID = 1000;
+
+    for (const Asset& asset : assets) {
+        if (asset.getAssetID() > maxID) {
+            maxID = asset.getAssetID();
+        }
+    }
+
+    nextAssetID = maxID + 1;
 }
 
 // Allocate asset to employee
@@ -1270,4 +1373,337 @@ void AssetManager::showAnalyticsDashboard() const
        << maintenanceRecords.size() << endl;
 
   cout << "\n====================================\n";
+}
+
+// Return lifecycle history to the API
+const vector<LifecycleRecord>&
+AssetManager::getLifecycleHistory() const {
+
+    return history;
+}
+
+
+// Allocate an asset using the web frontend
+bool AssetManager::allocateAssetForWeb(
+    int assetID,
+    const string& employee,
+    const string& date,
+    string& errorMessage
+) {
+
+    if (employee.empty() || employee == "None") {
+        errorMessage = "Please enter a valid employee name.";
+        return false;
+    }
+
+    if (!isValidDate(date)) {
+        errorMessage = "Invalid date. Use DD-MM-YYYY format.";
+        return false;
+    }
+
+    // Find the asset
+    Asset* selectedAsset = nullptr;
+
+    for (Asset& asset : assets) {
+
+        if (asset.getAssetID() == assetID) {
+            selectedAsset = &asset;
+            break;
+        }
+    }
+
+    if (selectedAsset == nullptr) {
+        errorMessage = "Asset not found.";
+        return false;
+    }
+
+    // Only In Stock assets can be allocated
+    if (selectedAsset->getStatus() != "In Stock") {
+        errorMessage = "Only In Stock assets can be allocated.";
+        return false;
+    }
+
+    string oldStatus = selectedAsset->getStatus();
+    string oldEmployee = selectedAsset->getAssignedEmployee();
+
+    // Update asset information
+    selectedAsset->setAssignedEmployee(employee);
+    selectedAsset->setStatus("In Use");
+
+    // Add lifecycle history
+    history.emplace_back(
+        assetID,
+        "Allocated",
+        date,
+        employee,
+        "In Use"
+    );
+
+    // Save both files
+    if (!FileManager::saveAssets(assets) ||
+        !FileManager::saveHistory(history)) {
+
+        // Roll back in-memory changes if saving fails
+        selectedAsset->setAssignedEmployee(oldEmployee);
+        selectedAsset->setStatus(oldStatus);
+        history.pop_back();
+
+        FileManager::saveAssets(assets);
+        FileManager::saveHistory(history);
+
+        errorMessage = "Could not save allocation records.";
+        return false;
+    }
+
+    errorMessage.clear();
+    return true;
+}
+
+
+// Transfer an asset using the web frontend
+bool AssetManager::transferAssetForWeb(
+    int assetID,
+    const string& newEmployee,
+    const string& date,
+    string& errorMessage
+) {
+
+    if (newEmployee.empty() || newEmployee == "None") {
+        errorMessage = "Please enter a valid new employee name.";
+        return false;
+    }
+
+    if (!isValidDate(date)) {
+        errorMessage = "Invalid date. Use DD-MM-YYYY format.";
+        return false;
+    }
+
+    Asset* selectedAsset = nullptr;
+
+    for (Asset& asset : assets) {
+
+        if (asset.getAssetID() == assetID) {
+            selectedAsset = &asset;
+            break;
+        }
+    }
+
+    if (selectedAsset == nullptr) {
+        errorMessage = "Asset not found.";
+        return false;
+    }
+
+    // Only In Use assets can be transferred
+    if (selectedAsset->getStatus() != "In Use") {
+        errorMessage = "Only In Use assets can be transferred.";
+        return false;
+    }
+
+    string oldEmployee = selectedAsset->getAssignedEmployee();
+
+    if (oldEmployee == newEmployee) {
+        errorMessage = "Asset is already assigned to this employee.";
+        return false;
+    }
+
+    // Change assignment
+    selectedAsset->setAssignedEmployee(newEmployee);
+
+    // Add transfer history
+    history.emplace_back(
+        assetID,
+        "Transferred",
+        date,
+        newEmployee,
+        "In Use"
+    );
+
+    if (!FileManager::saveAssets(assets) ||
+        !FileManager::saveHistory(history)) {
+
+        selectedAsset->setAssignedEmployee(oldEmployee);
+        history.pop_back();
+
+        FileManager::saveAssets(assets);
+        FileManager::saveHistory(history);
+
+        errorMessage = "Could not save transfer records.";
+        return false;
+    }
+
+    errorMessage.clear();
+    return true;
+}
+
+// Return all maintenance records to the web API
+const vector<MaintenanceRecord>&
+AssetManager::getMaintenanceRecords() const {
+
+    return maintenanceRecords;
+}
+
+
+// Add a maintenance record from the web frontend
+bool AssetManager::addMaintenanceForWeb(
+    int assetID,
+    const string& problem,
+    const string& repairDate,
+    double repairCost,
+    const string& technician,
+    const string& repairStatus,
+    string& errorMessage
+) {
+
+    // 1. Validate the input
+    if (assetID <= 0 ||
+        problem.empty() ||
+        technician.empty()) {
+
+        errorMessage =
+            "Please provide valid asset, problem and technician details.";
+
+        return false;
+    }
+
+    if (!isValidDate(repairDate)) {
+        errorMessage = "Invalid repair date. Use DD-MM-YYYY format.";
+        return false;
+    }
+
+    if (!std::isfinite(repairCost) || repairCost < 0) {
+        errorMessage = "Repair cost must be a valid non-negative amount.";
+        return false;
+    }
+
+    if (repairStatus != "Pending" &&
+        repairStatus != "Completed") {
+
+        errorMessage = "Repair status must be Pending or Completed.";
+        return false;
+    }
+
+
+    // 2. Find the asset
+    Asset* selectedAsset = nullptr;
+
+    for (Asset& asset : assets) {
+
+        if (asset.getAssetID() == assetID) {
+            selectedAsset = &asset;
+            break;
+        }
+    }
+
+    if (selectedAsset == nullptr) {
+        errorMessage = "Asset not found.";
+        return false;
+    }
+
+
+    // 3. Allow maintenance only for active assets
+    string oldStatus = selectedAsset->getStatus();
+
+    if (oldStatus != "In Use" &&
+        oldStatus != "Under Repair") {
+
+        errorMessage =
+            "Maintenance can only be recorded for In Use or Under Repair assets.";
+
+        return false;
+    }
+
+
+    // 4. Determine the resulting asset status
+    string newStatus = oldStatus;
+
+    if (repairStatus == "Pending") {
+        newStatus = "Under Repair";
+    }
+    else if (oldStatus == "Under Repair") {
+        newStatus = "In Use";
+    }
+
+
+    // 5. Create the maintenance record
+    MaintenanceRecord newRecord(
+        assetID,
+        problem,
+        repairDate,
+        repairCost,
+        technician,
+        repairStatus
+    );
+
+    maintenanceRecords.push_back(newRecord);
+
+
+    // 6. Update asset status if required
+    bool statusChanged = (oldStatus != newStatus);
+    bool historyAdded = false;
+
+    if (statusChanged) {
+
+        selectedAsset->setStatus(newStatus);
+
+        string action =
+            (newStatus == "Under Repair")
+            ? "Sent for Repair"
+            : "Repair Completed";
+
+        history.emplace_back(
+            assetID,
+            action,
+            repairDate,
+            selectedAsset->getAssignedEmployee(),
+            newStatus
+        );
+
+        historyAdded = true;
+    }
+
+
+    // 7. Save all changed files
+    bool maintenanceSaved =
+        FileManager::saveMaintenance(maintenanceRecords);
+
+    bool assetsSaved = true;
+
+    if (statusChanged) {
+        assetsSaved = FileManager::saveAssets(assets);
+    }
+
+    bool historySaved = true;
+
+    if (historyAdded) {
+        historySaved = FileManager::saveHistory(history);
+    }
+
+
+    // 8. Roll back in-memory records if a save fails
+    if (!maintenanceSaved || !assetsSaved || !historySaved) {
+
+        maintenanceRecords.pop_back();
+
+        if (historyAdded) {
+            history.pop_back();
+        }
+
+        if (statusChanged) {
+            selectedAsset->setStatus(oldStatus);
+        }
+
+        // Best-effort restoration of the previous CSV contents
+        FileManager::saveMaintenance(maintenanceRecords);
+        FileManager::saveAssets(assets);
+        FileManager::saveHistory(history);
+
+        errorMessage =
+            "Could not save maintenance records. Check the data folder.";
+
+        return false;
+    }
+
+
+    errorMessage.clear();
+    return true;
 }

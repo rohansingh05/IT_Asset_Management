@@ -18,11 +18,11 @@ public:
 
     static void loadAssets(vector<Asset>& assets);
 
-    static void saveHistory(const vector<LifecycleRecord>& history);
+    static bool saveHistory(const vector<LifecycleRecord>& history);
 
     static void loadHistory(vector<LifecycleRecord>& history);
 
-    static void saveMaintenance(const vector<MaintenanceRecord>& records);
+    static bool saveMaintenance(const vector<MaintenanceRecord>& records);
 
     static void loadMaintenance(vector<MaintenanceRecord>& records);
 

@@ -1,7 +1,5 @@
-101,laptop,HP,EliteBook,HP2026,25-10-2026,60000.00,25-10-2027,Bangluru,It,prakash,In Stock
-102,laptop,HP,Victus,HP1234,20-08-2025,51000.00,20-08-2026,Rishra,IT,rakesh,In Use
-103,Desktop,HP,Victus,Hp23456,20-10-2025,50000.00,20-10-2027,Karnatka,IT,None,Retired
-104,Desktop,Acer,elitebook,AC3456,12-09-2025,35000.00,12-09-2026,Delhi,IT,Ayush,Under Repair
-105,Laptop,HP,Victus,HP9876,28-10-2025,50000.00,28-10-2026,kolkata,IT,Rahul,In Use
-106,Laptop,HP,Victus,HP1234,28-02-2027,65000.00,,Bangluru,IT,Rohan,In Stock
-107,Computer,Hp,Viictus,HP1236,16-10-2026,5.00,,Bangluru,IT,Yash,In Use
+1001,Monitor,Dell,Dell256,Dell5674,11-11-2027,40000,,Kolkata,IT,Nidhi,In Use
+1002,Laptop,HP,Victus,HP3456,13-11-2026,60000,13-11-2027,Bangluru,IT,None,In Stock
+1003,Laptop,Dell,EliteBook,Dell5678,13-11-2026,65000,13-11-2027,Kolkata,HR,Sujit,Under Repair
+1004,Desktop,HP,Victus,HP1232,14-11-2025,70000,01-11-2026,Bangluru,IT,Tumpa,In Use
+1005,Projector,HP,Victus,HP3478,20-11-2026,30000,21-11-2027,Hyderabad,Finance,None,In Stock

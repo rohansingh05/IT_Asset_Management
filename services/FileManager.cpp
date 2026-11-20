@@ -1,3 +1,4 @@
+#include <fstream>
 #include <sstream>
 #include "FileManager.h"
 #include <iomanip>
@@ -11,22 +12,25 @@ bool FileManager::saveAssets(const vector<Asset>& assets) {
         return false;
     }
 
-    for (const Asset& a : assets) {
+    for (const Asset& asset : assets) {
 
-        file << a.getAssetID() << ","
-             << a.getAssetType() << ","
-             << a.getBrand() << ","
-             << a.getModel() << ","
-             << a.getSerialNumber() << ","
-             << a.getPurchaseDate() << ","
-             << fixed << setprecision(2)
-             << a.getPurchaseCost() << ","
-             << a.getWarrantyEndDate() << ","
-             << a.getLocation() << ","
-             << a.getDepartment() << ","
-             << a.getAssignedEmployee() << ","
-             << a.getStatus()
-             << "\n";
+        file << asset.getAssetID() << ","
+             << asset.getAssetType() << ","
+             << asset.getBrand() << ","
+             << asset.getModel() << ","
+             << asset.getSerialNumber() << ","
+             << asset.getPurchaseDate() << ","
+             << asset.getPurchaseCost() << ","
+             << asset.getWarrantyEndDate() << ","
+             << asset.getLocation() << ","
+             << asset.getDepartment() << ","
+             << asset.getAssignedEmployee() << ","
+             << asset.getStatus() << "\n";
+
+        if (!file.good()) {
+            file.close();
+            return false;
+        }
     }
 
     file.close();
@@ -106,14 +110,14 @@ void FileManager::loadAssets(vector<Asset>& assets) {
 
 
 // Save lifecycle history
-void FileManager::saveHistory(
-    const vector<LifecycleRecord>& history) {
+bool FileManager::saveHistory(
+    const vector<LifecycleRecord>& history
+) {
 
     ofstream file("data/lifecycle.csv");
 
     if (!file.is_open()) {
-        cout << "Error: Cannot open lifecycle.csv\n";
-        return;
+        return false;
     }
 
     for (const LifecycleRecord& record : history) {
@@ -123,11 +127,16 @@ void FileManager::saveHistory(
              << record.getDate() << ","
              << record.getEmployee() << ","
              << record.getStatus() << "\n";
+
+        if (!file.good()) {
+            file.close();
+            return false;
+        }
     }
 
     file.close();
 
-    cout << "Lifecycle history saved!\n";
+    return !file.fail();
 }
 
 // Load lifecycle history
@@ -184,30 +193,34 @@ void FileManager::loadHistory(
 
 
 // Save maintenance records
-void FileManager::saveMaintenance(
-    const vector<MaintenanceRecord>& records) {
+bool FileManager::saveMaintenance(
+    const vector<MaintenanceRecord>& records
+) {
 
     ofstream file("data/maintenance.csv");
 
     if (!file.is_open()) {
-        cout << "Unable to open maintenance.csv\n";
-        return;
+        return false;
     }
 
-    for (const MaintenanceRecord& r : records) {
+    for (const MaintenanceRecord& record : records) {
 
-        file << r.getAssetID() << ","
-             << r.getProblem() << ","
-             << r.getRepairDate() << ","
-             << r.getRepairCost() << ","
-             << r.getTechnician() << ","
-             << r.getRepairStatus()
-             << "\n";
+        file << record.getAssetID() << ","
+             << record.getProblem() << ","
+             << record.getRepairDate() << ","
+             << record.getRepairCost() << ","
+             << record.getTechnician() << ","
+             << record.getRepairStatus() << "\n";
+
+        if (!file.good()) {
+            file.close();
+            return false;
+        }
     }
 
     file.close();
 
-    cout << "Maintenance records saved!\n";
+    return !file.fail();
 }
 
 // Load maintenance records

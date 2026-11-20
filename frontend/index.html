@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Asset Management System</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">IT</div>
+          <div>
+            <h2>AssetFlow</h2>
+            <p>Management System</p>
+          </div>
+        </div>
+
+        <p class="menu-heading">MAIN MENU</p>
+
+        <nav class="side-nav">
+          <a href="#" id="dashboardNav" class="nav-link active">
+            ▦ <span>Dashboard</span>
+          </a>
+
+          <a href="#" id="assetsNav" class="nav-link">
+            ▣ <span>Asset Management</span>
+          </a>
+          <a href="#" id="allocationNav" class="nav-link">
+            ⇄ <span>Allocation & Transfer</span>
+          </a>
+          <a href="#" id="maintenanceNav" class="nav-link">
+            ⚒ <span>Maintenance</span>
+          </a>
+          <a href="#" id="warrantyNav" class="nav-link">
+            ◷ <span>Warranty Alerts</span>
+          </a>
+          <p class="menu-heading report-heading">ANALYTICS</p>
+
+          <a href="#" id="reportsNav" class="nav-link">
+            ▤ <span>Reports</span>
+          </a>
+          <a href="#" class="nav-link">⚙ <span>Settings</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-avatar">AD</div>
+          <div>
+            <strong>Administrator</strong>
+            <p>System User</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Header -->
+        <header class="topbar" id="dashboardHeader">
+          <div>
+            <p class="breadcrumb">Main Menu / Dashboard</p>
+            <h1>Dashboard Overview</h1>
+            <p class="page-description">
+              Monitor and manage your organization's IT assets.
+            </p>
+          </div>
+
+          <button class="primary-button" id="addAssetBtn">
+            + Register New Asset
+          </button>
+        </header>
+
+        <!-- Register Asset Dialog -->
+        <dialog id="assetDialog" class="asset-dialog">
+          <form id="assetForm" class="asset-form">
+            <div class="dialog-header">
+              <div>
+                <h2>Register New Asset</h2>
+                <p>Enter the details of the new IT asset.</p>
+              </div>
+
+              <button
+                type="button"
+                id="closeAssetDialog"
+                class="close-button"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <!-- Auto-generated ID: not entered by the user -->
+            <div class="generated-id-box">
+              <label for="assetIdPreview">Asset ID</label>
+              <input
+                type="text"
+                id="assetIdPreview"
+                value="Generated automatically after saving"
+                readonly
+              />
+              <small>The C++ backend will generate the unique Asset ID.</small>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="location">Location *</label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  placeholder="e.g. Dhanbad Office"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="department">Department *</label>
+                <input
+                  type="text"
+                  id="department"
+                  name="department"
+                  placeholder="e.g. IT, HR, Finance"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="assignedEmployee">Assigned Employee</label>
+                <input
+                  type="text"
+                  id="assignedEmployee"
+                  name="assignedEmployee"
+                  placeholder="Leave blank if unassigned"
+                />
+              </div>
+              <div class="form-field">
+                <label for="assetType">Asset Type *</label>
+                <select id="assetType" name="assetType" required>
+                  <option value="">Select asset type</option>
+                  <option value="Laptop">Laptop</option>
+                  <option value="Desktop">Desktop</option>
+                  <option value="Printer">Printer</option>
+                  <option value="Monitor">Monitor</option>
+                  <option value="Server">Server</option>
+                  <option value="Projector">Projector</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="brand">Brand *</label>
+                <input
+                  type="text"
+                  id="brand"
+                  name="brand"
+                  placeholder="e.g. HP, Dell, Lenovo"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="model">Model *</label>
+                <input
+                  type="text"
+                  id="model"
+                  name="model"
+                  placeholder="Enter model"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="serialNumber">Serial Number *</label>
+                <input
+                  type="text"
+                  id="serialNumber"
+                  name="serialNumber"
+                  placeholder="Enter serial number"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="purchaseDate">Purchase Date *</label>
+                <input
+                  type="date"
+                  id="purchaseDate"
+                  name="purchaseDate"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="purchaseCost">Purchase Cost (₹) *</label>
+                <input
+                  type="number"
+                  id="purchaseCost"
+                  name="purchaseCost"
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 65000"
+                  required
+                />
+              </div>
+
+              <div class="form-field">
+                <label for="warrantyEndDate">Warranty End Date *</label>
+                <input
+                  type="date"
+                  id="warrantyEndDate"
+                  name="warrantyEndDate"
+                  required
+                />
+              </div>
+            </div>
+
+            <p id="formMessage" class="form-message" role="status"></p>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                id="cancelAssetBtn"
+                class="secondary-button"
+              >
+                Cancel
+              </button>
+
+              <button type="submit" class="primary-button">
+                Validate Asset Details
+              </button>
+            </div>
+          </form>
+        </dialog>
+
+        <!-- Summary Cards -->
+        <section class="stats-grid" id="dashboardStats">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Total Assets</span>
+              <span class="stat-icon blue">▦</span>
+            </div>
+            <h2 id="totalAssets">0</h2>
+            <p>All registered assets</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>In Use</span>
+              <span class="stat-icon green">✓</span>
+            </div>
+            <h2 id="inUseAssets">0</h2>
+            <p>Currently allocated</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>In Stock</span>
+              <span class="stat-icon purple">□</span>
+            </div>
+            <h2 id="inStockAssets">0</h2>
+            <p>Available for allocation</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Under Repair</span>
+              <span class="stat-icon orange">⚒</span>
+            </div>
+            <h2 id="repairAssets">0</h2>
+            <p>Currently in maintenance</p>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span>Retired</span>
+              <span class="stat-icon red">⊘</span>
+            </div>
+            <h2 id="retiredAssets">0</h2>
+            <p>No longer in active use</p>
+          </div>
+        </section>
+
+        <!-- Status and Warranty Panels -->
+        <section class="overview-grid" id="dashboardOverview">
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Asset Status Overview</h3>
+                <p>Distribution of registered assets</p>
+              </div>
+            </div>
+
+            <div id="statusBreakdown" class="status-breakdown">
+              <!-- Filled by JavaScript -->
+            </div>
+          </div>
+
+          <div class="panel warranty-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Warranty Attention</h3>
+                <p>Assets requiring warranty review</p>
+              </div>
+              <span class="warning-icon">!</span>
+            </div>
+
+            <div class="warranty-message">
+              <div class="warranty-number" id="warrantyAlerts">0</div>
+              <div>
+                <strong>Warranty alerts</strong>
+                <p>Expired or expiring within 60 days</p>
+              </div>
+            </div>
+
+            <p class="small-note">
+              Warranty information will be calculated from registered asset
+              records.
+            </p>
+          </div>
+        </section>
+
+        <!-- Recent Assets -->
+        <section class="panel assets-panel" id="dashboardRecentAssets">
+          <div class="panel-heading assets-heading">
+            <div>
+              <h3>Recent Assets</h3>
+              <p>Recently registered IT assets</p>
+            </div>
+
+            <input
+              type="search"
+              id="assetSearch"
+              placeholder="Search assets..."
+              aria-label="Search assets"
+            />
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ASSET ID</th>
+                  <th>ASSET DETAILS</th>
+                  <th>DEPARTMENT</th>
+                  <th>ASSIGNED TO</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+
+              <tbody id="assetTableBody">
+                <!-- Filled by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span id="assetCount">Showing 0 assets</span>
+            <span class="demo-label">Sample dashboard data</span>
+          </div>
+        </section>
+
+        <footer class="footer">
+          IT Asset Lifecycle Management System · C++17 Backend
+        </footer>
+        <!-- ASSET MANAGEMENT PAGE -->
+        <section id="assetManagementPage" hidden>
+          <header class="topbar">
+            <div>
+              <p class="breadcrumb">Main Menu / Asset Management</p>
+              <h1>Asset Management</h1>
+              <p class="page-description">
+                View, search and filter all registered IT assets.
+              </p>
+            </div>
+
+            <button class="primary-button" id="addAssetFromListBtn">
+              + Register New Asset
+            </button>
+          </header>
+
+          <!-- Asset Summary -->
+          <section class="stats-grid management-stats">
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Total Assets</span>
+                <span class="stat-icon blue">▦</span>
+              </div>
+              <h2 id="managementTotal">0</h2>
+              <p>All registered assets</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>In Use</span>
+                <span class="stat-icon green">✓</span>
+              </div>
+              <h2 id="managementInUse">0</h2>
+              <p>Currently allocated</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>In Stock</span>
+                <span class="stat-icon purple">□</span>
+              </div>
+              <h2 id="managementInStock">0</h2>
+              <p>Available assets</p>
+            </div>
+          </section>
+
+          <!-- Asset List -->
+          <section class="panel">
+            <div class="panel-heading management-heading">
+              <div>
+                <h3>All Registered Assets</h3>
+                <p>Search and filter your asset records.</p>
+              </div>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="asset-filters">
+              <input
+                type="search"
+                id="managementSearch"
+                placeholder="Search ID, brand, model, serial..."
+                aria-label="Search all assets"
+              />
+
+              <select id="managementStatusFilter" aria-label="Filter by status">
+                <option value="">All Statuses</option>
+                <option value="In Stock">In Stock</option>
+                <option value="In Use">In Use</option>
+                <option value="Under Repair">Under Repair</option>
+                <option value="Retired">Retired</option>
+              </select>
+
+              <select
+                id="managementTypeFilter"
+                aria-label="Filter by asset type"
+              >
+                <option value="">All Asset Types</option>
+                <option value="Laptop">Laptop</option>
+                <option value="Desktop">Desktop</option>
+                <option value="Printer">Printer</option>
+                <option value="Monitor">Monitor</option>
+                <option value="Server">Server</option>
+                <option value="Projector">Projector</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <!-- Asset Table -->
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ASSET DETAILS</th>
+                    <th>SERIAL NUMBER</th>
+                    <th>DEPARTMENT</th>
+                    <th>LOCATION</th>
+                    <th>ASSIGNED TO</th>
+                    <th>PURCHASE COST</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+
+                <tbody id="allAssetsTableBody">
+                  <tr>
+                    <td colspan="8">Loading assets...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <span id="allAssetsCount">Showing 0 assets</span>
+              <span class="demo-label">C++ backend records</span>
+            </div>
+          </section>
+        </section>
+
+        <!-- ALLOCATION AND TRANSFER PAGE -->
+        <section id="allocationPage" hidden>
+          <header class="topbar">
+            <div>
+              <p class="breadcrumb">Main Menu / Allocation & Transfer</p>
+
+              <h1>Allocation & Transfer</h1>
+
+              <p class="page-description">
+                Assign assets to employees and manage asset transfers.
+              </p>
+            </div>
+          </header>
+
+          <!-- ALLOCATION AND TRANSFER FORMS -->
+          <section class="allocation-grid">
+            <!-- ALLOCATION FORM -->
+            <div class="panel operation-panel">
+              <div class="operation-heading">
+                <div class="operation-icon allocation-icon">↗</div>
+                <div>
+                  <h3>Allocate Asset</h3>
+                  <p>Assign an available asset to an employee.</p>
+                </div>
+              </div>
+
+              <form id="allocateForm" class="operation-form">
+                <div class="form-field">
+                  <label for="allocateAssetId">Select Asset *</label>
+
+                  <select id="allocateAssetId" required>
+                    <option value="">Loading available assets...</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label for="allocateEmployee">Employee Name *</label>
+
+                  <input
+                    type="text"
+                    id="allocateEmployee"
+                    placeholder="Enter employee name"
+                    required
+                  />
+                </div>
+
+                <div class="form-field">
+                  <label for="allocateDate">Allocation Date *</label>
+
+                  <input type="date" id="allocateDate" required />
+                </div>
+
+                <p
+                  id="allocateMessage"
+                  class="operation-message"
+                  role="status"
+                ></p>
+
+                <button type="submit" class="primary-button">
+                  Allocate Asset
+                </button>
+              </form>
+            </div>
+
+            <!-- TRANSFER FORM -->
+            <div class="panel operation-panel">
+              <div class="operation-heading">
+                <div class="operation-icon transfer-icon">⇄</div>
+                <div>
+                  <h3>Transfer Asset</h3>
+                  <p>Transfer an assigned asset to another employee.</p>
+                </div>
+              </div>
+
+              <form id="transferForm" class="operation-form">
+                <div class="form-field">
+                  <label for="transferAssetId">Select Asset *</label>
+
+                  <select id="transferAssetId" required>
+                    <option value="">Loading assigned assets...</option>
+                  </select>
+                </div>
+
+                <div class="current-assignment">
+                  <span>Currently Assigned To</span>
+                  <strong id="currentEmployee"> Select an asset </strong>
+                </div>
+
+                <div class="form-field">
+                  <label for="newEmployee">New Employee Name *</label>
+
+                  <input
+                    type="text"
+                    id="newEmployee"
+                    placeholder="Enter new employee name"
+                    required
+                  />
+                </div>
+
+                <div class="form-field">
+                  <label for="transferDate">Transfer Date *</label>
+
+                  <input type="date" id="transferDate" required />
+                </div>
+
+                <p
+                  id="transferMessage"
+                  class="operation-message"
+                  role="status"
+                ></p>
+
+                <button type="submit" class="primary-button">
+                  Transfer Asset
+                </button>
+              </form>
+            </div>
+          </section>
+
+          <!-- LIFECYCLE HISTORY -->
+          <section class="panel lifecycle-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Recent Lifecycle Activities</h3>
+                <p>Allocation and transfer history</p>
+              </div>
+
+              <button id="refreshHistoryBtn" class="secondary-button">
+                Refresh History
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ACTION</th>
+                    <th>DATE</th>
+                    <th>EMPLOYEE</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+
+                <tbody id="lifecycleTableBody">
+                  <tr>
+                    <td colspan="5">Loading lifecycle history...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <span id="lifecycleCount">Showing 0 activities</span>
+              <span class="demo-label">C++ lifecycle records</span>
+            </div>
+          </section>
+        </section>
+
+        <!-- MAINTENANCE MANAGEMENT PAGE -->
+        <section id="maintenancePage" hidden>
+          <header class="topbar">
+            <div>
+              <p class="breadcrumb">Main Menu / Maintenance</p>
+              <h1>Maintenance Management</h1>
+              <p class="page-description">
+                Record breakdowns, repairs and maintenance expenditure.
+              </p>
+            </div>
+          </header>
+
+          <!-- MAINTENANCE SUMMARY -->
+          <section class="stats-grid maintenance-stats">
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Total Records</span>
+                <span class="stat-icon blue">▤</span>
+              </div>
+              <h2 id="maintenanceTotal">0</h2>
+              <p>All maintenance records</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Pending</span>
+                <span class="stat-icon orange">◷</span>
+              </div>
+              <h2 id="maintenancePending">0</h2>
+              <p>Awaiting completion</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Completed</span>
+                <span class="stat-icon green">✓</span>
+              </div>
+              <h2 id="maintenanceCompleted">0</h2>
+              <p>Completed repair records</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Total Expenditure</span>
+                <span class="stat-icon purple">₹</span>
+              </div>
+              <h2 id="maintenanceExpenditure">₹0</h2>
+              <p>Total recorded repair costs</p>
+            </div>
+          </section>
+
+          <!-- ADD MAINTENANCE FORM -->
+          <section class="panel maintenance-form-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Add Maintenance Record</h3>
+                <p>Enter the repair details of an IT asset.</p>
+              </div>
+            </div>
+
+            <form id="maintenanceForm">
+              <div class="maintenance-form-grid">
+                <div class="form-field">
+                  <label for="maintenanceAssetId"> Select Asset * </label>
+
+                  <select id="maintenanceAssetId" required>
+                    <option value="">Loading assets...</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label for="maintenanceProblem">
+                    Problem Description *
+                  </label>
+
+                  <textarea
+                    id="maintenanceProblem"
+                    rows="3"
+                    placeholder="Describe the problem or repair work"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="form-field">
+                  <label for="repairDate"> Repair Date * </label>
+
+                  <input type="date" id="repairDate" required />
+                </div>
+
+                <div class="form-field">
+                  <label for="repairCost"> Repair Cost (₹) * </label>
+
+                  <input
+                    type="number"
+                    id="repairCost"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter repair cost"
+                    required
+                  />
+                </div>
+
+                <div class="form-field">
+                  <label for="technician"> Technician Name * </label>
+
+                  <input
+                    type="text"
+                    id="technician"
+                    placeholder="Enter technician name"
+                    required
+                  />
+                </div>
+
+                <div class="form-field">
+                  <label for="repairStatus"> Repair Status * </label>
+
+                  <select id="repairStatus" required>
+                    <option value="">Select repair status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+              </div>
+
+              <p
+                id="maintenanceMessage"
+                class="operation-message"
+                role="status"
+              ></p>
+
+              <button type="submit" class="primary-button">
+                Save Maintenance Record
+              </button>
+            </form>
+          </section>
+
+          <!-- MAINTENANCE HISTORY -->
+          <section class="panel maintenance-history-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Maintenance History</h3>
+                <p>View all recorded repair and maintenance activities.</p>
+              </div>
+
+              <button
+                type="button"
+                id="refreshMaintenanceBtn"
+                class="secondary-button"
+              >
+                Refresh Records
+              </button>
+            </div>
+
+            <div class="asset-filters">
+              <input
+                type="search"
+                id="maintenanceSearch"
+                placeholder="Search Asset ID, problem, technician..."
+                aria-label="Search maintenance records"
+              />
+
+              <select
+                id="maintenanceStatusFilter"
+                aria-label="Filter by repair status"
+              >
+                <option value="">All Repair Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>PROBLEM</th>
+                    <th>REPAIR DATE</th>
+                    <th>TECHNICIAN</th>
+                    <th>REPAIR COST</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+
+                <tbody id="maintenanceTableBody">
+                  <tr>
+                    <td colspan="6">Loading records...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <span id="maintenanceRecordCount"> Showing 0 records </span>
+
+              <span class="demo-label">C++ maintenance records</span>
+            </div>
+          </section>
+        </section>
+        <!-- WARRANTY MANAGEMENT PAGE -->
+        <section id="warrantyPage" hidden>
+          <header class="topbar">
+            <div>
+              <p class="breadcrumb">Main Menu / Warranty Alerts</p>
+
+              <h1>Warranty Management</h1>
+
+              <p class="page-description">
+                Monitor expired and upcoming warranty deadlines.
+              </p>
+            </div>
+          </header>
+
+          <!-- WARRANTY SUMMARY -->
+          <section class="stats-grid warranty-stats">
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Total Alerts</span>
+                <span class="stat-icon blue">!</span>
+              </div>
+              <h2 id="totalWarrantyAlerts">0</h2>
+              <p>Expired or expiring warranties</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Expired</span>
+                <span class="stat-icon red">!</span>
+              </div>
+              <h2 id="expiredWarranties">0</h2>
+              <p>Warranty already expired</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Within 30 Days</span>
+                <span class="stat-icon orange">◷</span>
+              </div>
+              <h2 id="warrantyWithin30">0</h2>
+              <p>Immediate attention required</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Within 60 Days</span>
+                <span class="stat-icon purple">◷</span>
+              </div>
+              <h2 id="warrantyWithin60">0</h2>
+              <p>Upcoming warranty deadlines</p>
+            </div>
+          </section>
+
+          <!-- WARRANTY ALERT TABLE -->
+          <section class="panel warranty-list-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Warranty Expiry Report</h3>
+                <p>Assets requiring warranty attention</p>
+              </div>
+
+              <button class="secondary-button" id="refreshWarrantyBtn">
+                Refresh Alerts
+              </button>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="asset-filters">
+              <input
+                type="search"
+                id="warrantySearch"
+                placeholder="Search Asset ID, brand, model..."
+                aria-label="Search warranty records"
+              />
+
+              <select id="warrantyFilter" aria-label="Filter warranty status">
+                <option value="">All Alerts</option>
+
+                <option value="Expired">Expired</option>
+
+                <option value="Within 30 Days">Within 30 Days</option>
+
+                <option value="Within 60 Days">Within 60 Days</option>
+              </select>
+            </div>
+
+            <!-- Warranty Table -->
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ASSET DETAILS</th>
+                    <th>DEPARTMENT</th>
+                    <th>LOCATION</th>
+                    <th>WARRANTY END DATE</th>
+                    <th>DAYS REMAINING</th>
+                    <th>ALERT STATUS</th>
+                  </tr>
+                </thead>
+
+                <tbody id="warrantyTableBody">
+                  <tr>
+                    <td colspan="7">Loading warranty information...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <span id="warrantyRecordCount"> Showing 0 alerts </span>
+
+              <span class="demo-label"> C++ warranty calculations </span>
+            </div>
+          </section>
+        </section>
+
+        <!-- REPORTS AND ANALYTICS PAGE -->
+        <section id="reportsPage" hidden>
+          <header class="topbar">
+            <div>
+              <p class="breadcrumb">Main Menu / Reports</p>
+
+              <h1>Reports & Analytics</h1>
+
+              <p class="page-description">
+                Analyze asset distribution, lifecycle costs and replacement
+                needs.
+              </p>
+            </div>
+
+            <button class="secondary-button" id="refreshReportsBtn">
+              Refresh Reports
+            </button>
+          </header>
+
+          <!-- REPORT SUMMARY -->
+          <section class="stats-grid reports-stats">
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Total Assets</span>
+                <span class="stat-icon blue">▦</span>
+              </div>
+              <h2 id="reportTotalAssets">0</h2>
+              <p>All registered assets</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>In Use</span>
+                <span class="stat-icon green">✓</span>
+              </div>
+              <h2 id="reportInUse">0</h2>
+              <p>Currently allocated</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>In Stock</span>
+                <span class="stat-icon purple">□</span>
+              </div>
+              <h2 id="reportInStock">0</h2>
+              <p>Available assets</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Under Repair</span>
+                <span class="stat-icon orange">⚒</span>
+              </div>
+              <h2 id="reportUnderRepair">0</h2>
+              <p>Under maintenance</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Retired</span>
+                <span class="stat-icon red">⊘</span>
+              </div>
+              <h2 id="reportRetired">0</h2>
+              <p>Retired assets</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-top">
+                <span>Maintenance Cost</span>
+                <span class="stat-icon blue">₹</span>
+              </div>
+              <h2 id="reportMaintenanceCost">₹0</h2>
+              <p>Total recorded expenditure</p>
+            </div>
+          </section>
+
+          <!-- ASSET DISTRIBUTION REPORTS -->
+          <section class="report-breakdown-grid">
+            <div class="panel report-panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Status-wise Asset Report</h3>
+                  <p>Distribution by asset status</p>
+                </div>
+              </div>
+
+              <div id="reportStatusBreakdown" class="report-bars">
+                Loading report...
+              </div>
+            </div>
+
+            <div class="panel report-panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Category-wise Asset Report</h3>
+                  <p>Distribution by hardware type</p>
+                </div>
+              </div>
+
+              <div id="reportCategoryBreakdown" class="report-bars">
+                Loading report...
+              </div>
+            </div>
+
+            <div class="panel report-panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Department-wise Report</h3>
+                  <p>Active assets by department</p>
+                </div>
+              </div>
+
+              <div id="reportDepartmentBreakdown" class="report-bars">
+                Loading report...
+              </div>
+            </div>
+
+            <div class="panel report-panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Asset Age Report</h3>
+                  <p>Distribution by asset age</p>
+                </div>
+              </div>
+
+              <div id="reportAgeBreakdown" class="report-bars">
+                Loading report...
+              </div>
+            </div>
+          </section>
+
+          <!-- MAINTENANCE EXPENDITURE -->
+          <section class="panel reports-table-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Maintenance Expenditure Report</h3>
+                <p>Maintenance cost grouped by asset</p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ASSET DETAILS</th>
+                    <th>REPAIR RECORDS</th>
+                    <th>PURCHASE COST</th>
+                    <th>MAINTENANCE COST</th>
+                  </tr>
+                </thead>
+
+                <tbody id="reportMaintenanceTable">
+                  <tr>
+                    <td colspan="5">Loading report...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- REPLACEMENT RECOMMENDATIONS -->
+          <section class="panel reports-table-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Replacement Recommendations</h3>
+                <p>
+                  Assets that meet project-defined replacement review criteria
+                </p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ASSET DETAILS</th>
+                    <th>STATUS</th>
+                    <th>AGE (YEARS)</th>
+                    <th>MAINTENANCE COST</th>
+                    <th>RECOMMENDATION REASON</th>
+                  </tr>
+                </thead>
+
+                <tbody id="reportReplacementTable">
+                  <tr>
+                    <td colspan="6">Loading report...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- RETIRED ASSET REPORT -->
+          <section class="panel reports-table-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Retired Asset Report</h3>
+                <p>Assets no longer in active use</p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ASSET ID</th>
+                    <th>ASSET DETAILS</th>
+                    <th>DEPARTMENT</th>
+                    <th>LOCATION</th>
+                    <th>PURCHASE DATE</th>
+                    <th>PURCHASE COST</th>
+                  </tr>
+                </thead>
+
+                <tbody id="reportRetiredTable">
+                  <tr>
+                    <td colspan="6">Loading report...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <p id="reportsMessage" class="operation-message" role="status"></p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

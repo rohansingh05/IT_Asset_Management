@@ -10,9 +10,11 @@
 
 using namespace std;
 
-class AssetManager {
+class AssetManager
+{
 
 private:
+    int nextAssetID = 1001;
 
     vector<Asset> assets;
 
@@ -21,6 +23,47 @@ private:
     vector<MaintenanceRecord> maintenanceRecords;
 
 public:
+    bool registerAsset(
+        const string &assetType,
+        const string &brand,
+        const string &model,
+        const string &serialNumber,
+        const string &purchaseDate,
+        double purchaseCost,
+        const string &warrantyEndDate,
+        const string &location,
+        const string &department,
+        const string &assignedEmployee,
+        int &generatedAssetID,
+        string &errorMessage);
+
+    const vector<Asset> &getAssets() const;
+
+    // Web API support
+    bool allocateAssetForWeb(
+        int assetID,
+        const string &employee,
+        const string &date,
+        string &errorMessage);
+
+    bool transferAssetForWeb(
+        int assetID,
+        const string &newEmployee,
+        const string &date,
+        string &errorMessage);
+
+    const vector<LifecycleRecord> &getLifecycleHistory() const;
+
+    bool addMaintenanceForWeb(
+        int assetID,
+        const string &problem,
+        const string &repairDate,
+        double repairCost,
+        const string &technician,
+        const string &repairStatus,
+        string &errorMessage);
+
+    const vector<MaintenanceRecord> &getMaintenanceRecords() const;
 
     void addAsset();
 
@@ -51,7 +94,7 @@ public:
     void identifyRepeatedFailures() const;
 
     void checkWarrantyAlerts() const;
-    
+
     void generateTotalAssetReport() const;
 
     void generateCategoryReport() const;
@@ -69,5 +112,4 @@ public:
     void generateReplacementReport() const;
 
     void showAnalyticsDashboard() const;
-
 };

@@ -514,8 +514,6 @@ async function loadAssetsFromBackend() {
       })),
     );
 
-    demoLabel.textContent = "Live C++ backend data";
-
     return true;
   } catch (error) {
     console.warn("Backend connection unavailable:", error);
@@ -604,7 +602,6 @@ assetForm.addEventListener("submit", async (event) => {
   };
 
   try {
-    formMessage.textContent = "Connecting to C++ backend...";
 
     const response = await fetch(`${API_BASE_URL}/api/assets`, {
       method: "POST",
@@ -1862,7 +1859,6 @@ async function refreshReportsData() {
         document.getElementById("reportsMessage");
 
     message.style.color = "#b45309";
-    message.textContent = "Loading reports from C++ backend...";
 
 
     try {
